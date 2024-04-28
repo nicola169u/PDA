@@ -15,8 +15,7 @@ transformer(F, [Numero, F, nil, nil], Numero, Numero) :-
 
 % Cas pour l'opérateur unaire non
 transformer(non F, ArbreF, NumeroIn, NumeroOut) :-
-    NewNumero is NumeroIn + 1,
-    transformer(F, ArbreF, NewNumero, NumeroOut).
+    transformer(F, ArbreF, NumeroIn, NumeroOut).
 
 % Cas pour l'opérateur implication =>
 transformer(F1 => F2, [NumeroIn, F1 => F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut) :-
