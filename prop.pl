@@ -4,9 +4,9 @@
 :- op(700, xfy, ou).    % Opérateur 'ou' (disjonction)
 :- op(600, xfy, =>).    % Opérateur '=>' (implication)
 
-% Prédicat transformer/2 pour transformer une formule en un arbre avec numérotation en profondeur
-transformer(F, Arbre) :-
-    transformer(F, Arbre, 0, _, 0, '_'), % Appelle le prédicat avec un numéro initial de nœud à 0
+% Prédicat transformer/1 pour transformer une formule en un arbre avec numérotation en profondeur
+transformer(F) :-
+    transformer(F, Arbre, 0, _, 0, '_'),
     write(Arbre).
 
 % Cas de base : F est une proposition atomique
