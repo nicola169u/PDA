@@ -16,10 +16,16 @@ transformer(F, [Numero, Polarite, F, nil, nil], Numero, Numero, Polarite) :-
 % Cas pour l'opérateur unaire 'non'
 transformer(non F, ArbreF, NumeroIn, NumeroOut, Polarite) :-
     InversePolarite is 1 - Polarite,
-    transformer(F, ArbreF, NumeroIn, NumeroOut, InversePolarite).
+    transformer(non F, ArbreF, NumeroIn, NumeroOut, InversePolarite). 
 
 % Cas pour l'opérateur implication '=>'
-transformer(F1 => F2, [NumeroIn, Polarite, F1 => F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+transformer(F1 => F2, [NumeroIn, Type, Polarite, F1 => F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+    ( Polarite =:= 0
+    ->
+        Type = alpha
+    ;
+        Type = beta
+    ),
     NewNumero1 is NumeroIn + 1,
     InversePolarite is 1 - Polarite,
     transformer(F1, ArbreF1, NewNumero1, NumeroInter, InversePolarite),
@@ -27,14 +33,26 @@ transformer(F1 => F2, [NumeroIn, Polarite, F1 => F2, ArbreF1, ArbreF2], NumeroIn
     transformer(F2, ArbreF2, NewNumero2, NumeroOut, Polarite).
 
 % Cas pour l'opérateur disjonction 'ou' (pas de changement de polarite)
-transformer(F1 ou F2, [NumeroIn, Polarite, F1 ou F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+transformer(F1 ou F2, [NumeroIn, Type, Polarite, F1 ou F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+    ( Polarite =:= 0
+    ->
+        Type = alpha
+    ;
+        Type = beta
+    ),
     NewNumero1 is NumeroIn + 1,
     transformer(F1, ArbreF1, NewNumero1, NumeroInter, Polarite),
     NewNumero2 is NumeroInter + 1,
     transformer(F2, ArbreF2, NewNumero2, NumeroOut, Polarite).
 
 % Cas pour l'opérateur conjonction 'et' (pas de changement de polarite)
-transformer(F1 et F2, [NumeroIn, Polarite, F1 et F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+transformer(F1 et F2, [NumeroIn, Type, Polarite, F1 et F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite) :-
+    ( Polarite =:= 0
+    ->
+        Type = beta
+    ;
+        Type = alpha
+    ),
     NewNumero1 is NumeroIn + 1,
     transformer(F1, ArbreF1, NewNumero1, NumeroInter, Polarite),
     NewNumero2 is NumeroInter + 1,
