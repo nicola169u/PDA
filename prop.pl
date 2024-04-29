@@ -70,9 +70,80 @@ transformer(F1 et F2, [NumeroIn, Type, TypeSec, Polarite, F1 et F2, ArbreF1, Arb
     NewNumero2 is NumeroInter + 1,
     transformer(F2, ArbreF2, NewNumero2, NumeroOut, Polarite, TypeSec2).
 
+% Prédicat pour générer et afficher l'arbre des chemins
+generate_paths_tree(Arbre) :-
+    generate_paths_tree(Arbre, [], Chemins),
+    write_paths_tree(Chemins).
+
+% Cas de base : si l'arbre est une feuille, on renvoie une liste contenant une seule feuille
+generate_paths_tree([Numero, _, _, _, _, nil, nil], Chemins, [Chemins]) :-
+    atomic(Numero).
+
+% Cas pour les nœuds de type alpha : on ajoute le numéro du nœud à la liste de chemins
+generate_paths_tree([Numero, alpha, _, _, _, ArbreF1, ArbreF2], Chemins, Paths) :-
+    generate_paths_tree(ArbreF1, [Numero | Chemins], Paths1),
+    generate_paths_tree(ArbreF2, [Numero | Chemins], Paths2),
+    append(Paths1, Paths2, Paths).
+
+% Cas pour les nœuds de type beta : on explore les deux fils séparément
+generate_paths_tree([_, beta, _, _, _, ArbreF1, ArbreF2], Chemins, Paths) :-
+    generate_paths_tree(ArbreF1, Chemins, Paths1),
+    generate_paths_tree(ArbreF2, Chemins, Paths2),
+    append(Paths1, Paths2, Paths).
+
+% Prédicat pour afficher l'arbre des chemins
+write_paths_tree([]).
+write_paths_tree([Chemin | Chemins]) :-
+    write_path(Chemin),
+    nl,
+    write_paths_tree(Chemins).
+
+write_path([]) :- write('').
+write_path([Chemin | Chemin]) :-
+    write(Chemin),
+    write(' -> '),
+    write_path(Chemin).
 
 
-% chemins([a, TypeP, TypeSec, Polarite, Racine, Fils1, Fils2]) :-
-%     chemins().
 
-% chemins(Arbre, )
+% afficher_arbre_chemins(Arbre) :-
+%     afficher_arbre_chemins(Arbre, [], Chemins),
+%     afficher_chemins(Chemins).
+
+% afficher_arbre_chemins([], _, []).
+% afficher_arbre_chemins([Index, beta, _, _, _, Fils1, Fils2], Chemins, [Index|NouveauxChemins]) :-
+%     !,
+%     afficher_arbre_chemins(Fils1, [Index|Chemins], Chemins1),
+%     afficher_arbre_chemins(Fils2, [Index|Chemins], Chemins2),
+%     append(Chemins1, Chemins2, NouveauxChemins).
+
+% afficher_arbre_chemins([Index, alpha, _, _, _, Fils1, Fils2], Chemins, [Index|NouveauxChemins]) :-
+%     !,
+%     append(Chemins, [Index], NouveauxChemins),
+%     afficher_arbre_chemins(Fils1, [Index|Chemins], Chemins1),
+%     afficher_arbre_chemins(Fils2, [Index|Chemins], Chemins2).
+
+% afficher_arbre_chemins([_, _, _, _, _, Fils1, Fils2], Chemins, NouveauxChemins) :-
+%     !,
+%     afficher_arbre_chemins(Fils1, Chemins, Chemins1),
+%     afficher_arbre_chemins(Fils2, Chemins, Chemins2),
+%     append(Chemins1, Chemins2, NouveauxChemins).
+
+% afficher_chemins(Chemins) :-
+%     afficher_chemins(Chemins, 0).
+
+% afficher_chemins([], _).
+% afficher_chemins([Index|Chemins], Profondeur) :-
+%     afficher_indentation(Profondeur),
+%     write('a'),
+%     write(Index),
+%     nl,
+%     succ(Profondeur, NouvelleProfondeur),
+%     afficher_chemins(Chemins, NouvelleProfondeur).
+
+% afficher_indentation(0) :- !.
+% afficher_indentation(Profondeur) :-
+%     write('| '),
+%     succ(NouvelleProfondeur, Profondeur),
+%     afficher_indentation(NouvelleProfondeur).
+
