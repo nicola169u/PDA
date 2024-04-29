@@ -14,9 +14,9 @@ transformer(F, [Numero, '_', TypeSec, Polarite, F, nil, nil], Numero, Numero, Po
     atomic(F).
 
 % Cas pour l'opérateur unaire 'non'
-transformer(non F, ArbreF, NumeroIn, NumeroOut, Polarite, TypeSec) :-
+transformer(non F, ArbreF, NumeroIn, NumeroOut, Polarite, _) :-
     InversePolarite is 1 - Polarite,
-    transformer(non F, ArbreF, NumeroIn, NumeroOut, InversePolarite, 'alpha1'). 
+    transformer(F, ArbreF, NumeroIn, NumeroOut, InversePolarite, 'alpha1'). 
 
 % Cas pour l'opérateur implication '=>'
 transformer(F1 => F2, [NumeroIn, Type, TypeSec, Polarite, F1 => F2, ArbreF1, ArbreF2], NumeroIn, NumeroOut, Polarite, TypeSec) :-
@@ -69,3 +69,10 @@ transformer(F1 et F2, [NumeroIn, Type, TypeSec, Polarite, F1 et F2, ArbreF1, Arb
     transformer(F1, ArbreF1, NewNumero1, NumeroInter, Polarite, TypeSec1),
     NewNumero2 is NumeroInter + 1,
     transformer(F2, ArbreF2, NewNumero2, NumeroOut, Polarite, TypeSec2).
+
+
+
+% chemins([a, TypeP, TypeSec, Polarite, Racine, Fils1, Fils2]) :-
+%     chemins().
+
+% chemins(Arbre, )
