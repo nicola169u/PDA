@@ -79,40 +79,11 @@ del(X, [Head|Tail], [Head|NewTail]) :-
 
 getNumero([Numero, _, _, _, _, _, _], Numero).
 
-% % Prédicat pour générer et afficher l'arbre des chemins
-% chemins(Arbre) :-
-%     chemins(Arbre, Chemins, [0]),
-%     write(Chemins).
-    
 
-% % Cas de base : feuille de l'arbre (proposition atomique)
-% chemins([Numero, _, _, _, _, nil, nil], Numero, _).
-
-
-% % Cas pour les nœuds de type alpha
-% chemins([Numero, alpha, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
-%     del(Numero, Noeud, PNoeud),
-%     getNumero(Fils1, Num1),
-%     getNumero(Fils2, Num2),
-%     chemins(Fils1, CheminsF1, [Num1|PNoeud]),
-%     chemins(Fils2, CheminsF2, [Num2|PNoeud]),
-%     CheminsFils = [[CheminsF1, CheminsF2]].
-
-
-
-% % Cas pour les nœuds de type beta
-% chemins([Numero, beta, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
-%     del(Numero, Noeud, PNoeud),
-%     getNumero(Fils1, Num1),
-%     getNumero(Fils2, Num2),
-%     chemins(Fils1, CheminsF1, [Num1|PNoeud]),
-%     chemins(Fils2, CheminsF2, [Num2|PNoeud]),
-%     CheminsFils = [[CheminsF1], [CheminsF2]].
-    
-
-
-
-
+% chemins(Arbre, CheminsAtomiques) :-
+%     chemins([0], Arbre, [], ResultatsNonFiltres),
+%     exclureNonAtomiques(ResultatsNonFiltres, CheminsAtomiques),
+%     verifierCheminsAtomiques(CheminsAtomiques).
 
 % Prédicat pour générer et afficher l'arbre des chemins
 chemins(Arbre) :-
@@ -124,6 +95,7 @@ chemins(Noeud, [Numero, _, _, _, _, nil, nil], Final).
 
 % Cas pour les nœuds de type alpha
 chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
+    writeln(Noeud),
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
     del(Numero, Noeud, PNoeud),
@@ -132,13 +104,14 @@ chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
     write(" sous-ensemble obtenu à partir de "),
     write(Numero),
     nl,
-    chemins(NewNoeud, Fils1, Final1),
-    chemins(NewNoeud, Fils2, Final2).
+    % ici aussi choisir quel fils mettre en fonction de s'il est atomique ou non car avec le type alpha on développe qu'une branche
+    % donc pas nécessaire d'appeler deux fois chemins (après c'est ce que je pense, je peux me tromper)
+    chemins(NewNoeud, Fils1, Final1).
+
+
 
 % Cas pour les nœuds de type beta
 chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
-    write(Noeud),
-    nl,
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
     del(Numero, Noeud, PNoeud),
@@ -154,8 +127,166 @@ chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
     write(" "),
     write(Numero),
     nl,
-    chemins(NewNoeud1, Fils1, Final1),
-    chemins(NewNoeud2, Fils2, Final2).
+    writeln(Fils1),
+    writeln(Fils2),
+    ( estAtomique(Fils1)
+    ->
+        write("il est atomique le "), 
+        writeln(Num1),
+        ( estAtomique(Fils2) -> 
+        write("il est atomique le "), 
+        writeln(Num2)
+        ;
+        write("il est pas atomique le "), 
+        writeln(Num2),
+        chemins(NewNoeud2, Fils2, Final2)
+        )
+    ;
+        write("il est pas atomique le "), 
+        writeln(Num1),
+        chemins(NewNoeud1, Fils1, Final1)
+    ).
+    % chemins(NewNoeud1, Fils1, Final1),
+    % chemins(NewNoeud2, Fils2, Final2).
+
+
+estAtomique([_,_, _, _, _, nil,nil]).
+
+% % Cas pour les nœuds de type alpha
+% chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Acc, Resultats) :-
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     del(Numero, Noeud, PNoeud),
+%     append(PNoeud, [Num1, Num2], NewNoeud),
+%     write(NewNoeud),
+%     write(" sous-ensemble obtenu à partir de "),
+%     write(Numero),
+%     nl,
+%     chemins(NewNoeud, Fils1, Acc, Acc1),
+%     chemins(NewNoeud, Fils2, Acc1, Resultats).
+
+% % Cas pour les nœuds de type beta
+% chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Acc, Resultats) :-
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     del(Numero, Noeud, PNoeud),
+%     append(PNoeud, [Num1], NewNoeud1),
+%     append(PNoeud, [Num2], NewNoeud2),
+%     write(NewNoeud1),
+%     write("   Nouvelle branche à partir de "),
+%     write(Numero),
+%     nl,
+%     write(NewNoeud2),
+%     write("   Nouvelle branche à partir de "),
+%     write(Numero),
+%     nl,
+%     chemins(NewNoeud1, Fils1, Acc, Acc1),
+%     chemins(NewNoeud2, Fils2, Acc1, Resultats).
+
+
+
+
+
+
+
+% Prédicat pour éliminer les doublons d'une liste
+eliminerDoublons(Liste, ListeSansDoublons) :-
+    eliminerDoublons(Liste, [], ListeSansDoublons).
+
+eliminerDoublons([], Acc, Acc).
+eliminerDoublons([X|Reste], Acc, ListeSansDoublons) :-
+    member(X, Acc),
+    !,
+    eliminerDoublons(Reste, Acc, ListeSansDoublons).
+eliminerDoublons([X|Reste], Acc, ListeSansDoublons) :-
+    eliminerDoublons(Reste, [X|Acc], ListeSansDoublons).
+
+
+
+
+
+
+% Vérifie si deux nœuds forment une connexion
+formentConnexion([_, _, _, Polarite1, ValeurNoeud1, _, _], [_, _, _, Polarite2, ValeurNoeud2, _, _]) :-
+    Polarite1 \= Polarite2,
+    ValeurNoeud1 == ValeurNoeud2.
+
+% Vérifie chaque paire de nœuds dans un sous-ensemble
+verifierConnexions([], _).
+verifierConnexions([Noeud1|Reste], SousEnsemble) :-
+    writeln(Noeud1),
+    comparerNoeudAvecSousEnsemble(Noeud1, SousEnsemble),
+    verifierConnexions(Reste, SousEnsemble).
+
+% Comparer un nœud avec chaque nœud dans un sous-ensemble
+comparerNoeudAvecSousEnsemble(_, [], false).
+comparerNoeudAvecSousEnsemble(Noeud, [Noeud2|Reste], ConnexionFormee) :-
+    ( formentConnexion(Noeud, Noeud2) ->
+        writeln('Connexion : '), writeln([Noeud, Noeud2]),
+        comparerNoeudAvecSousEnsemble(Noeud, Reste, true)
+    ;
+        comparerNoeudAvecSousEnsemble(Noeud, Reste, ConnexionFormee)
+    ).
+
+% Vérifie chaque sous-ensemble de CheminsAtomiques
+verifierCheminsAtomiques([]).
+verifierCheminsAtomiques([SousEnsemble|Reste]) :-
+    comparerNoeudAvecSousEnsemble(_, SousEnsemble, ConnexionFormee),
+    ( ConnexionFormee ->
+        verifierCheminsAtomiques(Reste)
+    ;
+        writeln('formule invalide.'),
+        false % Si une connexion n'est pas formée dans un sous-ensemble, retourne false
+    ).
+
+
+
+
+
+% % Prédicat pour générer et afficher l'arbre des chemins
+% chemins(Arbre, Resultats) :-
+%     chemins([0], Arbre, Resultats).
+    
+
+% % Cas de base : feuille de l'arbre (proposition atomique)
+% chemins(Noeud, [Numero, _, _, _, _, nil, nil], [Noeud]).
+
+% % Cas pour les nœuds de type alpha
+% chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Resultats) :-
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     del(Numero, Noeud, PNoeud),
+%     append(PNoeud, [Num1, Num2], NewNoeud),
+%     write(NewNoeud),
+%     write(" sous-ensemble obtenu à partir de "),
+%     write(Numero),
+%     nl,
+%     chemins(NewNoeud, Fils1, Resultat1),
+%     chemins(NewNoeud, Fils2, Resultat2), 
+%     append(Resultats1, Resultats2, ResultatsAlpha),
+%     append([Noeud], ResultatsAlpha, Resultats).
+
+% % Cas pour les nœuds de type beta
+% chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Resultats) :-
+%     write(Noeud),
+%     nl,
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     del(Numero, Noeud, PNoeud),
+%     append(PNoeud, [Num1], NewNoeud1),
+%     append(PNoeud, [Num2], NewNoeud2),
+%     write(NewNoeud1),
+%     write("   Nouvelle branche à partir de "),
+%     write(Numero),
+%     nl,
+%     write(NewNoeud2),
+%     write("   Nouvelle branche à partir de "),
+%     write(Numero),
+%     nl,
+%     chemins(NewNoeud1, Fils1, Resultats1),
+%     chemins(NewNoeud2, Fils2, Resultats2),
+%     append(Resultats1, Resultats2, ResultatsBeta),
+%     append([Noeud], ResultatsBeta, Resultats).
 
 
 
