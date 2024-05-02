@@ -79,31 +79,85 @@ del(X, [Head|Tail], [Head|NewTail]) :-
 
 getNumero([Numero, _, _, _, _, _, _], Numero).
 
+% % Prédicat pour générer et afficher l'arbre des chemins
+% chemins(Arbre) :-
+%     chemins(Arbre, Chemins, [0]),
+%     write(Chemins).
+    
+
+% % Cas de base : feuille de l'arbre (proposition atomique)
+% chemins([Numero, _, _, _, _, nil, nil], Numero, _).
+
+
+% % Cas pour les nœuds de type alpha
+% chemins([Numero, alpha, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
+%     del(Numero, Noeud, PNoeud),
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     chemins(Fils1, CheminsF1, [Num1|PNoeud]),
+%     chemins(Fils2, CheminsF2, [Num2|PNoeud]),
+%     CheminsFils = [[CheminsF1, CheminsF2]].
+
+
+
+% % Cas pour les nœuds de type beta
+% chemins([Numero, beta, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
+%     del(Numero, Noeud, PNoeud),
+%     getNumero(Fils1, Num1),
+%     getNumero(Fils2, Num2),
+%     chemins(Fils1, CheminsF1, [Num1|PNoeud]),
+%     chemins(Fils2, CheminsF2, [Num2|PNoeud]),
+%     CheminsFils = [[CheminsF1], [CheminsF2]].
+    
+
+
+
+
+
 % Prédicat pour générer et afficher l'arbre des chemins
 chemins(Arbre) :-
-    chemins(Arbre, Chemins, [0]),
-    write(Chemins).
+    chemins([0], Arbre, Final).
+    
 
 % Cas de base : feuille de l'arbre (proposition atomique)
-chemins([Numero, _, _, _, _, nil, nil], Numero, _).
+chemins(Noeud, [Numero, _, _, _, _, nil, nil], Final).
 
 % Cas pour les nœuds de type alpha
-chemins([Numero, alpha, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
-    del(Numero, Noeud, PNoeud),
+chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
-    chemins(Fils1, CheminsF1, [Num1|PNoeud]),
-    chemins(Fils2, CheminsF2, [Num2|PNoeud]),
-    CheminsFils = [[CheminsF1, CheminsF2]].
+    del(Numero, Noeud, PNoeud),
+    append(PNoeud, [Num1, Num2], NewNoeud),
+    write(NewNoeud),
+    write(" sous-ensemble obtenu à partir de "),
+    write(Numero),
+    nl,
+    chemins(NewNoeud, Fils1, Final1),
+    chemins(NewNoeud, Fils2, Final2).
 
 % Cas pour les nœuds de type beta
-chemins([Numero, beta, _, _, _, Fils1, Fils2], [Noeud | CheminsFils], Noeud) :-
-    del(Numero, Noeud, PNoeud),
+chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
+    write(Noeud),
+    nl,
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
-    chemins(Fils1, CheminsF1, [Num1|PNoeud]),
-    chemins(Fils2, CheminsF2, [Num2|PNoeud]),
-    CheminsFils = [[CheminsF1], [CheminsF2]].
+    del(Numero, Noeud, PNoeud),
+    append(PNoeud, [Num1], NewNoeud1),
+    append(PNoeud, [Num2], NewNoeud2),
+    write(NewNoeud1),
+    write("   Nouvelle branche à partir de "),
+    write(" "),
+    write(Numero),
+    nl,
+    write(NewNoeud2),
+    write("   Nouvelle branche à partir de "),
+    write(" "),
+    write(Numero),
+    nl,
+    chemins(NewNoeud1, Fils1, Final1),
+    chemins(NewNoeud2, Fils2, Final2).
+
+
 
 
 
