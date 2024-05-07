@@ -80,6 +80,8 @@ del(X, [Head|Tail], [Head|NewTail]) :-
 getNumero([Numero, _, _, _, _, _, _], Numero).
 
 
+
+
 % chemins(Arbre, CheminsAtomiques) :-
 %     chemins([0], Arbre, [], ResultatsNonFiltres),
 %     exclureNonAtomiques(ResultatsNonFiltres, CheminsAtomiques),
@@ -95,6 +97,7 @@ chemins(Noeud, [Numero, _, _, _, _, nil, nil], Final).
 
 % Cas pour les nœuds de type alpha
 chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
+    writeln(Numero),
     writeln(Noeud),
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
@@ -104,14 +107,38 @@ chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
     write(" sous-ensemble obtenu à partir de "),
     write(Numero),
     nl,
+    (
+        futurFilsAtomique(Fils1)
+        -> 
+        chemins(NewNoeud, Fils2, Final1)
+    ),
+    (
+    futurFilsAtomique(Fils2)
+    -> 
+    chemins(NewNoeud, Fils1, Final1)
+    ).
+
     % ici aussi choisir quel fils mettre en fonction de s'il est atomique ou non car avec le type alpha on développe qu'une branche
     % donc pas nécessaire d'appeler deux fois chemins (après c'est ce que je pense, je peux me tromper)
-    chemins(NewNoeud, Fils1, Final1).
+    % (estAtomique(Fils1) ->
+    %     (
+    %         estAtomique(Fils2) ->
+    %         Final = NewNoeud
+    %         ;
+    %         chemins(NewNoeud, Fils2, Final1)
+    %     )
+    %     ;
+    %     chemins(NewNoeud, Fils1, Final1)
+    % ).
 
 
 
 % Cas pour les nœuds de type beta
 chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
+    write("Je suis beta et le numero "),
+    write(Numero),
+    write(" et je recois "),
+    writeln(Noeud),
     getNumero(Fils1, Num1),
     getNumero(Fils2, Num2),
     del(Numero, Noeud, PNoeud),
@@ -151,6 +178,10 @@ chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
 
 
 estAtomique([_,_, _, _, _, nil,nil]).
+
+futurFilsAtomique([Numero, _, _, _, _, Fils1, Fils2]) :- 
+    estAtomique(Fils1),
+    estAtomique(Fils2).
 
 % % Cas pour les nœuds de type alpha
 % chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Acc, Resultats) :-
