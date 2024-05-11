@@ -172,64 +172,6 @@ chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final):-
     ).
 
 
-
-
-% % Cas de base : feuille de l'arbre (proposition atomique)
-% chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
-%     (Numero == 0 
-%         -> del(Numero, Noeud, PNoeud)
-%         ; del([Numero, alpha, _, _, _, Fils1, Fils2], Noeud, PNoeud)
-%     ),
-%     append(PNoeud, [Fils1, Fils2], NewNoeud),
-%     taille(NewNoeud, Taille),
-%     tousLesElementsAtomiques(NewNoeud),  % Vérifie que tous les éléments de NewNoeud sont atomiques
-%     writeln("Chemin atomique => "),
-%     writeln(NewNoeud),
-%     ( \+verifierConnexion(NewNoeud)
-%       -> writeln("Connexion réussie pour ce nœud")
-%       ; true
-%     ).
-
-% % Cas récursif : au moins un élément de NewNoeud n'est pas atomique
-% chemins(Noeud, [Numero, alpha, _, _, _, Fils1, Fils2], Final) :-
-%     (Numero == 0 
-%         -> del(Numero, Noeud, PNoeud)
-%         ; del([Numero, alpha, _, _, _, Fils1, Fils2], Noeud, PNoeud)
-%     ),
-%     append(PNoeud, [Fils1, Fils2], NewNoeud),
-%     taille(NewNoeud, Taille),
-%     \+ tousLesElementsAtomiques(NewNoeud),  % Vérifie qu'au moins un élément de NewNoeud n'est pas atomique
-%     traiterElementsNonAtomiques(NewNoeud, Final).  % Traiter les éléments non atomiques de NewNoeud récursivement
-    
-
-
-% % Cas de base : feuille de l'arbre (proposition atomique)
-% chemins(Noeud, [Numero, beta, _, _, _, Fils1, Fils2], Final) :-
-%     del([Numero, beta, _, _, _, Fils1, Fils2], Noeud, PNoeud),
-%     append(PNoeud, [Fils1], NewNoeud1),
-%     append(PNoeud, [Fils2], NewNoeud2),
-%     nth0(0, NewNoeud1, Elem1),
-%     nth0(1, NewNoeud1, Elem2),
-%     nth0(0, NewNoeud2, Elem3),
-%     nth0(1, NewNoeud2, Elem4),
-%     (   estAtomique(Fils1), estAtomique(Fils2)
-%     ->  (   \+ estAtomique(Elem1), \+ estAtomique(Elem3)
-%         ->  chemins(NewNoeud1, Elem1, Final),
-%             chemins(NewNoeud2, Elem3, Final)
-%         ;   chemins(NewNoeud1, Elem2, Final),
-%             chemins(NewNoeud2, Elem4, Final)
-%         )
-%     ;   traiterElementsNonAtomiques([Elem1, Elem2, Elem3, Elem4], Final)
-%     ).
-
-% % Prédicat pour traiter les éléments non atomiques dans un nœud beta
-% traiterElementsNonAtomiques([], _).
-% traiterElementsNonAtomiques([Elem|Reste], Final) :-
-%     (   \+ estAtomique(Elem)  % Vérifie si l'élément n'est pas atomique
-%     ->  chemins(NewNoeud, Elem, Final)  % Appel récursif pour traiter cet élément
-%     ;   traiterElementsNonAtomiques(Reste, Final)  % Sinon, passe à l'élément suivant
-%     ).
-
     
 
 % Prédicat pour calculer la taille d'une liste
