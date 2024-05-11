@@ -6,7 +6,9 @@
 
 % Prédicat principal du programme
 estValide(F) :-
+    writeln("Construction de l arbre syntaxique indexé :\n"),
     transformer(F, Arbre),  % On transforme la formule F en un arbre Arbre
+    writeln("\n\nConstruction de l arbre des chemins et recherche des connexions :\n"),
     (
         chemins(Arbre)  % On génère les chemins à partir de l'arbre
         ->  % Si les chemins sont valides
@@ -94,13 +96,6 @@ getNumero([Numero, _, _, _, _, _, _], Numero).
 
 estAtomique([_, _, _, _, _, nil, nil]).
 
-
-
-
-% chemins(Arbre, CheminsAtomiques) :-
-%     chemins([0], Arbre, [], ResultatsNonFiltres),
-%     exclureNonAtomiques(ResultatsNonFiltres, CheminsAtomiques),
-%     verifierCheminsAtomiques(CheminsAtomiques).
 
 % Prédicat pour générer et afficher l'arbre des chemins
 chemins(Arbre) :-
